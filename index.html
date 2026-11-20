@@ -15,11 +15,11 @@
   *{box-sizing:border-box}
   body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:15px}
   .hidden{display:none !important}
-  h1,h2,h3{margin:0}
+  h1,h2,h3,h4{margin:0}
   button{font:inherit;cursor:pointer}
   input,select,textarea{font:inherit;color:inherit}
 
-  /* ---------- Auth screens ---------- */
+  /* ---------- Login ---------- */
   .auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
     background:linear-gradient(135deg,#0a4f55 0%,#0f6b72 55%,#1b8791 100%)}
   .auth-card{background:var(--card);width:100%;max-width:420px;border-radius:16px;padding:32px;box-shadow:0 20px 50px rgba(0,0,0,.25)}
@@ -30,6 +30,7 @@
   .field label{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
   .field input,.field select,.field textarea{padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;width:100%}
   .field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--brand);outline-offset:-1px;border-color:var(--brand)}
+  .hint{font-size:12px;color:var(--muted);margin-top:2px}
   .btn{padding:10px 16px;border-radius:8px;border:1px solid transparent;font-weight:600}
   .btn-primary{background:var(--brand);color:#fff}
   .btn-primary:hover{background:var(--brand-dark)}
@@ -42,26 +43,22 @@
   .msg{padding:10px 12px;border-radius:8px;font-size:13px;margin-bottom:14px}
   .msg.err{background:#fbeeec;color:var(--danger);border:1px solid #f0c9c4}
   .msg.ok{background:#e9f5ee;color:var(--ok);border:1px solid #c6e3d1}
-  .qr-box{display:flex;justify-content:center;margin:10px 0}
-  .qr-box img{width:190px;height:190px;border:1px solid var(--line);border-radius:10px;padding:6px;background:#fff}
-  .secret{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;background:#f7f5ef;border:1px dashed var(--line);
-    padding:8px 10px;border-radius:8px;word-break:break-all;text-align:center;user-select:all}
-  .code-input{text-align:center;font-size:24px !important;letter-spacing:.35em;font-family:ui-monospace,Menlo,Consolas,monospace}
-  .linkbtn{background:none;border:none;color:var(--brand);text-decoration:underline;padding:0;font-size:13px}
   .small{font-size:13px;color:var(--muted)}
-  .steps{padding-left:18px;margin:0 0 12px;color:var(--muted);font-size:13px}
 
-  /* ---------- App ---------- */
+  /* ---------- App shell ---------- */
   header.top{background:var(--brand-dark);color:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
   header.top .t1{font-weight:700;font-size:18px}
   header.top .t2{font-size:12px;opacity:.8}
   header.top .right{display:flex;align-items:center;gap:12px;font-size:13px}
   header.top .btn-ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.4)}
   header.top .btn-ghost:hover{background:rgba(255,255,255,.12)}
+  nav.tabs{background:#fff;border-bottom:1px solid var(--line);padding:0 24px;display:flex;gap:4px}
+  nav.tabs button{background:none;border:none;padding:13px 16px;font-weight:600;color:var(--muted);border-bottom:3px solid transparent}
+  nav.tabs button.active{color:var(--brand);border-bottom-color:var(--brand)}
   main{max-width:1280px;margin:0 auto;padding:24px}
   .page-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:18px}
   .page-head h2{font-size:22px}
-  .page-head .small{margin-top:2px}
+  .page-head .btns{display:flex;gap:10px;flex-wrap:wrap}
   .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
   .stat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px}
   .stat .n{font-size:26px;font-weight:700;color:var(--brand)}
@@ -70,22 +67,42 @@
   .toolbar input,.toolbar select{padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#fff}
   .toolbar input[type=search]{flex:1;min-width:220px}
   .table-wrap{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:auto}
-  table{width:100%;border-collapse:collapse;min-width:820px}
-  th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+  table{width:100%;border-collapse:collapse;min-width:900px}
+  th,td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
   th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:#faf8f3;position:sticky;top:0}
-  tbody tr{cursor:pointer}
-  tbody tr:hover{background:#f7fafa}
-  td.name{font-weight:600}
+  #rows tr{cursor:pointer}
+  #rows tr:hover{background:#f7fafa}
+  .namecell{display:flex;align-items:center;gap:10px;font-weight:600}
+  .namecell span.nm{color:var(--brand)}
   .badge{display:inline-block;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:600;background:#eef1f2;color:#44525a}
-  .badge.Regular{background:#e3f3e9;color:#25683f}
+  .badge.Regular,.badge.Active{background:#e3f3e9;color:#25683f}
+  .badge.Resigned{background:#f3e4e2;color:#913028}
   .badge.Probationary{background:#fdf1d6;color:#8a6414}
   .badge.Contractual,.badge.Project{background:#e4eefb;color:#2a5a99}
   .badge.Seasonal,.badge.Manpower{background:#f0e8f8;color:#6a3f93}
+  tr.is-resigned td{color:#7b848a}
   .empty{padding:40px;text-align:center;color:var(--muted)}
 
-  /* ---------- Modal ---------- */
+  /* avatar (initials underneath, photo on top if the URL loads) */
+  .avatar{position:relative;width:34px;height:34px;border-radius:50%;background:var(--brand);color:#fff;font-size:12px;font-weight:700;
+    display:inline-flex;align-items:center;justify-content:center;flex:none;overflow:hidden}
+  .avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .avatar.lg{width:110px;height:110px;font-size:36px;border:4px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,.2)}
+
+  /* ---------- Dashboard ---------- */
+  .dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+  .card h4{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--brand);margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--accent);display:inline-block}
+  .bar-row{display:grid;grid-template-columns:130px 1fr 74px;gap:10px;align-items:center;margin:7px 0;font-size:13px}
+  .bar-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .bar-track{background:#eef1f2;border-radius:999px;height:12px;overflow:hidden}
+  .bar-fill{background:linear-gradient(90deg,var(--brand),#2aa0aa);height:100%;border-radius:999px}
+  .bar-val{text-align:right;font-weight:600}
+  .bar-val span{font-weight:400;color:var(--muted);font-size:12px}
+
+  /* ---------- Modals ---------- */
   .overlay{position:fixed;inset:0;background:rgba(15,25,28,.55);display:flex;align-items:flex-start;justify-content:center;padding:30px 16px;overflow:auto;z-index:50}
-  .modal{background:var(--card);width:100%;max-width:760px;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+  .modal{background:var(--card);width:100%;max-width:760px;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.35);overflow:hidden}
   .modal-head{padding:18px 24px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
   .modal-head h3{font-size:18px}
   .x{background:none;border:none;font-size:24px;line-height:1;color:var(--muted)}
@@ -97,8 +114,53 @@
   .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0 14px}
   .grid.g3{grid-template-columns:repeat(3,1fr)}
   .grid .full{grid-column:1/-1}
-  @media(max-width:640px){.grid,.grid.g3{grid-template-columns:1fr}main{padding:14px}}
+  .checks{display:flex;flex-wrap:wrap;gap:6px 18px;margin-bottom:10px}
+  .checks label{font-size:14px;display:flex;align-items:center;gap:6px}
+  @media(max-width:640px){.grid,.grid.g3{grid-template-columns:1fr}main{padding:14px}.bar-row{grid-template-columns:100px 1fr 62px}}
   .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1f2a2e;color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;z-index:100}
+  .photo-row{display:flex;gap:12px;align-items:flex-start}
+  .photo-row .field{flex:1;margin-bottom:0}
+
+  /* ---------- Employee card ---------- */
+  .profile-banner{background:linear-gradient(135deg,var(--brand-dark),#1b8791);height:90px}
+  .profile-top{padding:0 24px;margin-top:-55px;display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap}
+  .profile-top .who{padding-bottom:6px}
+  .profile-top h3{font-size:22px}
+  .profile-top .pos{color:var(--muted)}
+  .profile-badges{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+  .kv{display:grid;grid-template-columns:repeat(2,1fr);gap:12px 20px;margin-bottom:18px}
+  .kv .full{grid-column:1/-1}
+  .kv .k{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  .kv .v{font-weight:600;word-break:break-word}
+  .sec-title{font-size:13px;font-weight:700;color:var(--brand);text-transform:uppercase;letter-spacing:.06em;margin:6px 0 10px;border-bottom:2px solid var(--accent);display:inline-block}
+
+  /* ---------- Masterlist report ---------- */
+  .report{position:fixed;inset:0;background:#e9e6de;overflow:auto;z-index:80}
+  .report-bar{position:sticky;top:0;background:var(--brand-dark);color:#fff;padding:12px 20px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .report-bar .sp{flex:1}
+  .report-bar .btn-ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.45)}
+  .report-bar .btn-ghost:hover{background:rgba(255,255,255,.12)}
+  .paper{background:#fff;margin:20px auto;padding:28px;max-width:1250px;box-shadow:0 4px 20px rgba(0,0,0,.15)}
+  .paper .rh{text-align:center;margin-bottom:14px}
+  .paper .rh .co{font-size:20px;font-weight:700}
+  .paper .rh .ad{font-size:12px;color:#555}
+  .paper .rh .ti{font-size:16px;font-weight:700;margin-top:8px;letter-spacing:.08em;text-transform:uppercase}
+  .paper .meta{font-size:12px;color:#444;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+  .paper table{min-width:0;font-size:12px}
+  .paper th,.paper td{padding:5px 7px;border:1px solid #cfcac0;white-space:normal}
+  .paper th{position:static;background:#efece4;color:#222}
+  .paper tr.grp td{background:#dfeceb;font-weight:700}
+  .paper thead{display:table-header-group}
+  .paper tr{page-break-inside:avoid}
+
+  @media print{
+    body{background:#fff}
+    body > *:not(#report){display:none !important}
+    #report{position:static;background:#fff;overflow:visible}
+    #report .report-bar{display:none !important}
+    #report .paper{box-shadow:none;margin:0;max-width:none;padding:0}
+    @page{size:landscape;margin:12mm}
+  }
 </style>
 </head>
 <body>
@@ -112,7 +174,7 @@
     <div id="login-msg" class="msg err hidden"></div>
     <div class="field"><label for="login-email">Email</label><input id="login-email" type="email" required autocomplete="username"></div>
     <div class="field"><label for="login-pass">Password</label><input id="login-pass" type="password" required autocomplete="current-password"></div>
-    <button class="btn btn-primary btn-block" id="login-btn" type="submit">Continue</button>
+    <button class="btn btn-primary btn-block" id="login-btn" type="submit">Sign in</button>
   </form>
 </section>
 
@@ -129,14 +191,21 @@
     </div>
   </header>
 
-  <main>
+  <nav class="tabs">
+    <button data-view="employees" class="active">Employees</button>
+    <button data-view="dashboard">Dashboard</button>
+  </nav>
+
+  <!-- ===== Employees view ===== -->
+  <main id="view-employees">
     <div class="page-head">
       <div>
         <h2>Employee Database</h2>
         <div class="small" id="count-label"></div>
       </div>
-      <div style="display:flex;gap:10px">
+      <div class="btns">
         <button class="btn btn-ghost" id="export-btn">Export CSV</button>
+        <button class="btn btn-ghost" id="ml-btn">Generate Masterlist</button>
         <button class="btn btn-primary" id="add-btn">+ Add Employee</button>
       </div>
     </div>
@@ -145,23 +214,54 @@
 
     <div class="toolbar">
       <input type="search" id="search" placeholder="Search name, ID number, position…">
-      <select id="f-dept"><option value="">All departments</option></select>
-      <select id="f-status"><option value="">All statuses</option></select>
+      <select id="f-work"></select>
+      <select id="f-dept"></select>
+      <select id="f-status"></select>
     </div>
 
     <div class="table-wrap">
       <table>
         <thead><tr>
-          <th>Emp ID</th><th>Name</th><th>Position</th><th>Department</th><th>Status</th><th>Date Hired</th><th>Contact</th>
+          <th>Emp ID</th><th>Name</th><th>Position</th><th>Department</th><th>Employment</th><th>Work Status</th><th>Date Hired</th><th>Contact</th>
         </tr></thead>
         <tbody id="rows"></tbody>
       </table>
       <div class="empty hidden" id="empty">No employees found.</div>
     </div>
+    <p class="small">Tip: click any employee to open their information card.</p>
+  </main>
+
+  <!-- ===== Dashboard view ===== -->
+  <main id="view-dashboard" class="hidden">
+    <div class="page-head">
+      <div>
+        <h2>Workforce Dashboard</h2>
+        <div class="small" id="dash-label"></div>
+      </div>
+      <div class="field" style="margin:0;min-width:200px">
+        <label for="dash-scope">Show</label>
+        <select id="dash-scope"></select>
+      </div>
+    </div>
+    <div class="stats" id="dash-kpis"></div>
+    <div class="dash-grid" id="dash-charts"></div>
   </main>
 </div>
 
-<!-- ================= EMPLOYEE MODAL ================= -->
+<!-- ================= EMPLOYEE CARD ================= -->
+<div class="overlay hidden" id="card-modal">
+  <div class="modal" style="max-width:640px">
+    <div class="profile-banner"></div>
+    <div class="profile-top" id="card-top"></div>
+    <div class="modal-body" id="card-body"></div>
+    <div class="modal-foot">
+      <button type="button" class="btn btn-ghost" id="card-close">Close</button>
+      <button type="button" class="btn btn-primary" id="card-edit">Edit</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= ADD / EDIT MODAL ================= -->
 <div class="overlay hidden" id="modal">
   <form class="modal" id="emp-form">
     <div class="modal-head">
@@ -189,6 +289,8 @@
           <div class="field"><label>Department *</label><select name="department" required></select></div>
           <div class="field"><label>Employment Status *</label><select name="employment_status" required></select></div>
           <div class="field"><label>Date Hired *</label><input type="date" name="date_hired" required></div>
+          <div class="field"><label>Work Status *</label><select name="work_status" required></select></div>
+          <div class="field hidden" id="resigned-field"><label>Date Resigned *</label><input type="date" name="date_resigned"></div>
         </div>
       </fieldset>
 
@@ -219,6 +321,18 @@
           <div class="field"><label>TIN Number</label><input name="tin_number"></div>
         </div>
       </fieldset>
+
+      <fieldset>
+        <legend>Photo (optional)</legend>
+        <div class="photo-row">
+          <div class="avatar lg" id="photo-preview" style="width:64px;height:64px;font-size:20px;border-width:2px"></div>
+          <div class="field">
+            <label>Image URL</label>
+            <input name="photo_url" type="url" placeholder="https://… (link to a picture)">
+            <div class="hint">Paste a direct link to an image. You can add or change this anytime.</div>
+          </div>
+        </div>
+      </fieldset>
     </div>
     <div class="modal-foot">
       <button type="button" class="btn btn-danger hidden" id="delete-btn">Delete</button>
@@ -230,23 +344,83 @@
   </form>
 </div>
 
+<!-- ================= MASTERLIST OPTIONS ================= -->
+<div class="overlay hidden" id="ml-modal">
+  <div class="modal" style="max-width:580px">
+    <div class="modal-head">
+      <h3>Generate Employee Masterlist</h3>
+      <button type="button" class="x" id="ml-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <fieldset>
+        <legend>Filters</legend>
+        <div class="grid">
+          <div class="field"><label>Work Status</label><select id="ml-work"></select></div>
+          <div class="field"><label>Department</label><select id="ml-dept"></select></div>
+          <div class="field"><label>Employment Status</label><select id="ml-emp"></select></div>
+          <div class="field"><label>Sex</label><select id="ml-sex"></select></div>
+        </div>
+        <div class="hint" style="margin:-6px 0 12px">Leave everything on "All" for the full masterlist.</div>
+      </fieldset>
+      <fieldset>
+        <legend>Layout</legend>
+        <div class="grid">
+          <div class="field"><label>Sort by</label>
+            <select id="ml-sort">
+              <option value="name">Name (A–Z)</option>
+              <option value="id">Employee ID</option>
+              <option value="hired">Date hired (oldest first)</option>
+              <option value="dept">Department, then name</option>
+            </select>
+          </div>
+        </div>
+        <div class="checks">
+          <label><input type="checkbox" id="ml-group"> Group by department</label>
+          <label><input type="checkbox" id="ml-workcol"> Work status / date resigned</label>
+          <label><input type="checkbox" id="ml-personal" checked> Sex, civil status, birthdate</label>
+          <label><input type="checkbox" id="ml-contact"> Contact number, email, address</label>
+          <label><input type="checkbox" id="ml-gov"> SSS, PhilHealth, Pag-IBIG, TIN</label>
+        </div>
+      </fieldset>
+    </div>
+    <div class="modal-foot">
+      <button type="button" class="btn btn-ghost" id="ml-cancel">Cancel</button>
+      <button type="button" class="btn btn-primary" id="ml-generate">Generate</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= MASTERLIST REPORT (print view) ================= -->
+<div class="report hidden" id="report">
+  <div class="report-bar">
+    <strong>Masterlist preview</strong>
+    <span class="sp"></span>
+    <button class="btn btn-ghost" id="rep-csv">Download CSV</button>
+    <button class="btn btn-primary" id="rep-print">Print / Save as PDF</button>
+    <button class="btn btn-ghost" id="rep-close">Close</button>
+  </div>
+  <div class="paper" id="paper"></div>
+</div>
+
 <div class="toast hidden" id="toast"></div>
 
 <script>
 /* =====================================================
    CONFIG
    The publishable key is designed to be public. Your data is protected
-   by Row Level Security (only signed-in users can read or write) + the
-   email/password login above.
+   by Row Level Security + the email/password login.
    ===================================================== */
 const SUPABASE_URL = "https://hlewbexqatbbstyydgmv.supabase.co";
 const SUPABASE_KEY = "sb_publishable_jSlSMDXaMn0pSYSgoJqMhg_s9t8VJiI";
 const IDLE_MINUTES = 15;   // auto sign-out after inactivity
+const COMPANY = "Cadlao Resort and Restaurant";
+const ADDRESS = "Caalan, El Nido, Palawan";
 
 const DEPARTMENTS = ["Admin","Front Office","Reservations","Housekeeping","Laundry","Maintenance","Kitchen","F&B","Bar","Accounting","HR","Operations","Marketing","Executive"];
 const STATUSES    = ["Probationary","Regular","Project Based","Contractual","Seasonal","Manpower Pool"];
 const CIVIL       = ["Single","Married","Widow"];
 const SEXES       = ["Male","Female"];
+const WORK        = ["Active","Resigned"];
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
   auth: { persistSession: true, autoRefreshToken: true }
@@ -255,73 +429,104 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
 const $ = (id) => document.getElementById(id);
 let employees = [];
 let editingId = null;
+let cardId = null;
 let idleTimer = null;
+let reportState = null;
 
 /* ---------- helpers ---------- */
 function show(name){
   $("screen-login").classList.toggle("hidden", name !== "login");
   $("screen-app").classList.toggle("hidden", name !== "app");
 }
-function showMsg(id, text, type="err"){
-  const el = $(id); el.textContent = text; el.className = "msg " + type;
-}
+function showMsg(id, text, type="err"){ const el = $(id); el.textContent = text; el.className = "msg " + type; }
 function clearMsg(id){ $(id).className = "msg err hidden"; $(id).textContent = ""; }
 function toast(text){
   const t = $("toast"); t.textContent = text; t.classList.remove("hidden");
-  clearTimeout(toast._t); toast._t = setTimeout(()=>t.classList.add("hidden"), 2600);
+  clearTimeout(toast._t); toast._t = setTimeout(()=>t.classList.add("hidden"), 2800);
 }
 function esc(s){
   return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
 function fillSelect(sel, items, placeholder){
   sel.innerHTML = (placeholder !== undefined ? `<option value="">${esc(placeholder)}</option>` : "") +
-    items.map(i => `<option value="${esc(i)}">${esc(i)}</option>`).join("");
+    items.map(i => Array.isArray(i)
+      ? `<option value="${esc(i[0])}">${esc(i[1])}</option>`
+      : `<option value="${esc(i)}">${esc(i)}</option>`).join("");
 }
+const ws = (e) => e.work_status || "Active";
 function fullName(e){
   const mi = e.middle_name ? " " + e.middle_name : "";
   const suf = e.suffix ? " " + e.suffix : "";
   return `${e.last_name}, ${e.first_name}${mi}${suf}`;
 }
-function fmtDate(d){
-  if(!d) return "";
-  const [y,m,day] = d.split("-").map(Number);
-  return new Date(y, m-1, day).toLocaleDateString("en-PH",{year:"numeric",month:"short",day:"numeric"});
+function displayName(e){
+  return [e.first_name, e.middle_name, e.last_name, e.suffix].filter(Boolean).join(" ");
 }
-function badgeClass(s){ return s.split(" ")[0]; }
+function initials(e){ return ((e.first_name||"")[0] || "") + ((e.last_name||"")[0] || ""); }
+function validUrl(u){ return typeof u === "string" && /^https?:\/\//i.test(u.trim()); }
+function avatarHtml(e, extra=""){
+  const img = validUrl(e.photo_url)
+    ? `<img src="${esc(e.photo_url.trim())}" alt="" referrerpolicy="no-referrer" onerror="this.style.display='none'">` : "";
+  return `<span class="avatar ${extra}">${esc(initials(e).toUpperCase())}${img}</span>`;
+}
+function pd(s){ if(!s) return null; const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d); }
+function fmtDate(s){
+  const d = pd(s); if(!d) return "";
+  return d.toLocaleDateString("en-PH",{year:"numeric",month:"short",day:"numeric"});
+}
+function monthsBetween(a,b){
+  let m = (b.getFullYear()-a.getFullYear())*12 + (b.getMonth()-a.getMonth());
+  if(b.getDate() < a.getDate()) m--;
+  return Math.max(0,m);
+}
+function endDate(e){ return ws(e)==="Resigned" && e.date_resigned ? pd(e.date_resigned) : new Date(); }
+function tenureMonths(e){ const h = pd(e.date_hired); return h ? monthsBetween(h, endDate(e)) : 0; }
+function tenureText(e){
+  const m = tenureMonths(e), y = Math.floor(m/12), r = m%12, p = [];
+  if(y) p.push(y + " yr" + (y>1?"s":""));
+  if(r || !y) p.push(r + " mo");
+  return p.join(" ");
+}
+function ageOf(e){ const b = pd(e.date_of_birth); return b ? Math.floor(monthsBetween(b,new Date())/12) : null; }
+function badgeClass(s){ return String(s).split(" ")[0]; }
+function toCsv(headers, rows){
+  const cell = (v) => `"${String(v ?? "").replace(/"/g,'""')}"`;
+  return "\ufeff" + [headers.map(cell).join(",")].concat(rows.map(r => r.map(cell).join(","))).join("\r\n");
+}
+function download(name, text){
+  const blob = new Blob([text], {type:"text/csv;charset=utf-8"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = name; a.click(); URL.revokeObjectURL(a.href);
+}
+const today = () => new Date().toISOString().slice(0,10);
 
-/* ---------- auth flow ---------- */
+/* ---------- auth ---------- */
 async function route(){
   const { data:{ session } } = await sb.auth.getSession();
   if(!session){ stopIdle(); return show("login"); }
   return enterApp(session);
 }
-
 $("login-form").addEventListener("submit", async (e)=>{
   e.preventDefault(); clearMsg("login-msg");
   const btn = $("login-btn"); btn.disabled = true; btn.textContent = "Signing in…";
   const { error } = await sb.auth.signInWithPassword({
-    email: $("login-email").value.trim(),
-    password: $("login-pass").value
+    email: $("login-email").value.trim(), password: $("login-pass").value
   });
-  btn.disabled = false; btn.textContent = "Continue";
+  btn.disabled = false; btn.textContent = "Sign in";
   if(error){ return showMsg("login-msg", "Invalid email or password."); }
   $("login-pass").value = "";
   route();
 });
-
 document.querySelectorAll("[data-signout]").forEach(b => b.addEventListener("click", signOut));
 async function signOut(){
-  stopIdle();
-  employees = [];
+  stopIdle(); employees = [];
   $("rows").innerHTML = "";
+  closeAllOverlays();
   await sb.auth.signOut();
   show("login");
 }
-sb.auth.onAuthStateChange((event)=>{
-  if(event === "SIGNED_OUT"){ setTimeout(()=>show("login"),0); }
-});
+sb.auth.onAuthStateChange((event)=>{ if(event === "SIGNED_OUT"){ setTimeout(()=>show("login"),0); } });
 
-/* ---------- idle timeout ---------- */
 function startIdle(){
   stopIdle();
   const reset = () => { clearTimeout(idleTimer); idleTimer = setTimeout(async ()=>{
@@ -346,68 +551,155 @@ async function enterApp(session){
   startIdle();
   await loadEmployees();
 }
-
 async function loadEmployees(){
   const { data, error } = await sb.from("employees").select("*").order("last_name").order("first_name");
-  if(error){ toast("Could not load employees: " + error.message); return; }
+  if(error){
+    toast(error.code === "42501"
+      ? "Permission denied. Run employees_update.sql in Supabase first."
+      : "Could not load employees: " + error.message);
+    return;
+  }
   employees = data || [];
-  render();
+  render(); renderDashboard();
 }
 
+/* tabs */
+function setView(v){
+  $("view-employees").classList.toggle("hidden", v !== "employees");
+  $("view-dashboard").classList.toggle("hidden", v !== "dashboard");
+  document.querySelectorAll("nav.tabs button").forEach(b => b.classList.toggle("active", b.dataset.view === v));
+  if(v === "dashboard") renderDashboard();
+}
+document.querySelectorAll("nav.tabs button").forEach(b => b.addEventListener("click", ()=>setView(b.dataset.view)));
+
+/* ---------- employees list ---------- */
 function filtered(){
   const q = $("search").value.trim().toLowerCase();
-  const d = $("f-dept").value, s = $("f-status").value;
+  const w = $("f-work").value, d = $("f-dept").value, s = $("f-status").value;
   return employees.filter(e =>
+    (w === "All" || ws(e) === w) &&
     (!d || e.department === d) &&
     (!s || e.employment_status === s) &&
-    (!q || [fullName(e), e.employee_id, e.position].join(" ").toLowerCase().includes(q))
+    (!q || [fullName(e), displayName(e), e.employee_id, e.position].join(" ").toLowerCase().includes(q))
   );
 }
-
 function render(){
   const list = filtered();
-  $("count-label").textContent = `${list.length} of ${employees.length} employee${employees.length===1?"":"s"}`;
+  $("count-label").textContent = `Showing ${list.length} of ${employees.length} employee${employees.length===1?"":"s"}`;
 
-  // stats
-  const count = (st) => employees.filter(e => e.employment_status === st).length;
+  const active = employees.filter(e => ws(e) === "Active");
+  const cnt = (st) => active.filter(e => e.employment_status === st).length;
   $("stats").innerHTML = [
-    ["Total", employees.length], ["Regular", count("Regular")], ["Probationary", count("Probationary")],
-    ["Contractual / Project", count("Contractual")+count("Project Based")],
-    ["Seasonal / Pool", count("Seasonal")+count("Manpower Pool")]
+    ["Active", active.length],
+    ["Resigned", employees.length - active.length],
+    ["Regular", cnt("Regular")],
+    ["Probationary", cnt("Probationary")],
+    ["Contractual / Project", cnt("Contractual") + cnt("Project Based")],
+    ["Seasonal / Pool", cnt("Seasonal") + cnt("Manpower Pool")]
   ].map(([l,n]) => `<div class="stat"><div class="n">${n}</div><div class="l">${l}</div></div>`).join("");
 
   $("rows").innerHTML = list.map(e => `
-    <tr data-id="${esc(e.id)}">
+    <tr data-id="${esc(e.id)}" class="${ws(e)==="Resigned" ? "is-resigned" : ""}">
       <td>${esc(e.employee_id)}</td>
-      <td class="name">${esc(fullName(e))}</td>
+      <td><div class="namecell">${avatarHtml(e)}<span class="nm">${esc(fullName(e))}</span></div></td>
       <td>${esc(e.position)}</td>
       <td>${esc(e.department)}</td>
       <td><span class="badge ${esc(badgeClass(e.employment_status))}">${esc(e.employment_status)}</span></td>
+      <td><span class="badge ${esc(ws(e))}">${esc(ws(e))}</span></td>
       <td>${esc(fmtDate(e.date_hired))}</td>
       <td>${esc(e.contact_number || "")}</td>
     </tr>`).join("");
   $("empty").classList.toggle("hidden", list.length > 0);
 }
-
-["search","f-dept","f-status"].forEach(id => $(id).addEventListener("input", render));
+["search","f-work","f-dept","f-status"].forEach(id => $(id).addEventListener("input", render));
 $("rows").addEventListener("click", (e)=>{
   const tr = e.target.closest("tr"); if(!tr) return;
-  openModal(employees.find(x => x.id === tr.dataset.id));
+  const emp = employees.find(x => x.id === tr.dataset.id);
+  if(emp) openCard(emp);
 });
 
-/* ---------- modal ---------- */
+/* ---------- employee card ---------- */
+function kv(k, v, full){ return `<div class="${full?"full":""}"><div class="k">${esc(k)}</div><div class="v">${v ? esc(v) : "—"}</div></div>`; }
+function openCard(emp){
+  cardId = emp.id;
+  const age = ageOf(emp);
+  $("card-top").innerHTML = `
+    ${avatarHtml(emp, "lg")}
+    <div class="who">
+      <h3>${esc(displayName(emp))}</h3>
+      <div class="pos">${esc(emp.position)} &middot; ${esc(emp.department)}</div>
+      <div class="profile-badges">
+        <span class="badge ${esc(ws(emp))}">${esc(ws(emp))}</span>
+        <span class="badge ${esc(badgeClass(emp.employment_status))}">${esc(emp.employment_status)}</span>
+      </div>
+    </div>`;
+  $("card-body").innerHTML = `
+    <div class="sec-title" style="margin-top:14px">Employment</div>
+    <div class="kv">
+      ${kv("Employee ID", emp.employee_id)}
+      ${kv("Date Hired", fmtDate(emp.date_hired))}
+      ${ws(emp)==="Resigned" ? kv("Date Resigned", fmtDate(emp.date_resigned)) : ""}
+      ${kv(ws(emp)==="Resigned" ? "Length of Service" : "Tenure", tenureText(emp))}
+    </div>
+    <div class="sec-title">Personal</div>
+    <div class="kv">
+      ${kv("Sex", emp.sex)}
+      ${kv("Civil Status", emp.civil_status)}
+      ${kv("Date of Birth", emp.date_of_birth ? fmtDate(emp.date_of_birth) + (age!==null ? ` (${age} yrs old)` : "") : "")}
+      ${kv("Permanent Address", emp.permanent_address, true)}
+    </div>
+    <div class="sec-title">Contact</div>
+    <div class="kv">
+      ${kv("Contact Number", emp.contact_number)}
+      ${kv("Email Address", emp.email_address)}
+    </div>
+    <div class="sec-title">Government Numbers</div>
+    <div class="kv">
+      ${kv("SSS", emp.sss_number)}
+      ${kv("PhilHealth", emp.philhealth_number)}
+      ${kv("Pag-IBIG", emp.pagibig_number)}
+      ${kv("TIN", emp.tin_number)}
+    </div>`;
+  $("card-modal").classList.remove("hidden");
+  $("card-modal").scrollTop = 0;
+}
+function closeCard(){ $("card-modal").classList.add("hidden"); }
+$("card-close").addEventListener("click", closeCard);
+$("card-edit").addEventListener("click", ()=>{
+  const emp = employees.find(x => x.id === cardId);
+  closeCard(); if(emp) openModal(emp);
+});
+
+/* ---------- add / edit modal ---------- */
 const form = $("emp-form");
-const FIELDS = ["first_name","middle_name","last_name","suffix","employee_id","position","department","employment_status",
+const BASE_FIELDS = ["first_name","middle_name","last_name","suffix","employee_id","position","department","employment_status",
   "date_hired","civil_status","sex","date_of_birth","permanent_address","contact_number","email_address",
   "sss_number","philhealth_number","pagibig_number","tin_number"];
+const NEW_FIELDS = ["work_status","date_resigned","photo_url"];
+const FIELDS = BASE_FIELDS.concat(NEW_FIELDS);
+
+function syncResigned(){
+  const r = form.elements.work_status.value === "Resigned";
+  $("resigned-field").classList.toggle("hidden", !r);
+  form.elements.date_resigned.required = r;
+}
+function syncPhoto(){
+  const url = form.elements.photo_url.value.trim();
+  const pv = $("photo-preview");
+  const ini = ((form.elements.first_name.value[0]||"") + (form.elements.last_name.value[0]||"")).toUpperCase();
+  pv.innerHTML = esc(ini) + (validUrl(url) ? `<img src="${esc(url)}" alt="" referrerpolicy="no-referrer" onerror="this.style.display='none'">` : "");
+}
+form.elements.work_status.addEventListener("change", syncResigned);
+["photo_url","first_name","last_name"].forEach(n => form.elements[n].addEventListener("input", syncPhoto));
 
 function openModal(emp){
   editingId = emp ? emp.id : null;
-  clearMsg("form-msg");
-  form.reset();
+  clearMsg("form-msg"); form.reset();
   $("modal-title").textContent = emp ? "Edit Employee" : "Add Employee";
   $("delete-btn").classList.toggle("hidden", !emp);
   FIELDS.forEach(f => { form.elements[f].value = emp ? (emp[f] ?? "") : ""; });
+  form.elements.work_status.value = emp ? ws(emp) : "Active";
+  syncResigned(); syncPhoto();
   $("modal").classList.remove("hidden");
   $("modal").scrollTop = 0;
 }
@@ -420,6 +712,13 @@ form.addEventListener("submit", async (e)=>{
   e.preventDefault(); clearMsg("form-msg");
   const payload = {};
   FIELDS.forEach(f => { const v = form.elements[f].value.trim(); payload[f] = v === "" ? null : v; });
+  if(payload.work_status === "Active") payload.date_resigned = null;
+  if(payload.work_status === "Resigned" && !payload.date_resigned){
+    return showMsg("form-msg", "Please enter the date resigned.");
+  }
+  if(payload.photo_url && !validUrl(payload.photo_url)){
+    return showMsg("form-msg", "Photo link must start with http:// or https://");
+  }
 
   const btn = $("save-btn"); btn.disabled = true; btn.textContent = "Saving…";
   const res = editingId
@@ -428,12 +727,11 @@ form.addEventListener("submit", async (e)=>{
   btn.disabled = false; btn.textContent = "Save";
 
   if(res.error){
-    let m = res.error.message;
-    if(res.error.code === "23505"){
-      m = "Duplicate value: that Employee ID or government number already belongs to another employee.";
-    } else if(res.error.code === "23514"){
-      m = "Please check your entries (invalid email, or date of birth is not before date hired).";
-    }
+    const c = res.error.code; let m = res.error.message;
+    if(c === "42501") m = "Permission denied. Run employees_update.sql in the Supabase SQL Editor, then try again.";
+    else if(c === "23505") m = "Duplicate value: that Employee ID or government number already belongs to another employee.";
+    else if(c === "23514") m = "Please check your entries (invalid email or photo link, or dates out of order).";
+    else if(c === "PGRST204" || c === "42703") m = "The database is missing the new columns. Run employees_update.sql in Supabase first.";
     return showMsg("form-msg", m);
   }
   closeModal(); toast(editingId ? "Employee updated" : "Employee added");
@@ -442,34 +740,185 @@ form.addEventListener("submit", async (e)=>{
 
 $("delete-btn").addEventListener("click", async ()=>{
   const emp = employees.find(x => x.id === editingId); if(!emp) return;
-  if(!confirm(`Permanently delete ${fullName(emp)} (${emp.employee_id})?\nThis cannot be undone.`)) return;
+  if(!confirm(`Permanently delete ${fullName(emp)} (${emp.employee_id})?\nThis cannot be undone.\n\nTip: if the employee simply left, set Work Status to "Resigned" instead to keep the record.`)) return;
   const { error } = await sb.from("employees").delete().eq("id", editingId);
   if(error){ return showMsg("form-msg", error.message); }
   closeModal(); toast("Employee deleted"); loadEmployees();
 });
 
-/* ---------- CSV export ---------- */
+/* ---------- CSV export (all fields, current filters) ---------- */
 $("export-btn").addEventListener("click", ()=>{
   const list = filtered();
-  if(!list.length){ return toast("Nothing to export"); }
-  const cols = FIELDS;
-  const cell = (v) => `"${String(v ?? "").replace(/"/g,'""')}"`;
-  // prefix gov numbers with a tab-safe apostrophe-free approach: wrap in quotes only (Excel may drop leading zeros)
-  const csv = [cols.join(",")].concat(list.map(e => cols.map(c => cell(e[c])).join(","))).join("\r\n");
-  const blob = new Blob(["\ufeff"+csv], {type:"text/csv;charset=utf-8"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = `cadlao-employees-${new Date().toISOString().slice(0,10)}.csv`;
-  a.click(); URL.revokeObjectURL(a.href);
+  if(!list.length) return toast("Nothing to export");
+  download(`cadlao-employees-${today()}.csv`, toCsv(FIELDS, list.map(e => FIELDS.map(f => f==="work_status" ? ws(e) : e[f]))));
+});
+
+/* ---------- dashboard ---------- */
+function tally(list, keyFn, order){
+  const m = new Map();
+  list.forEach(e => { const k = keyFn(e) || "Not set"; m.set(k, (m.get(k)||0) + 1); });
+  let rows = [...m.entries()];
+  if(order){
+    const idx = (l) => { const i = order.indexOf(l); return i === -1 ? 999 : i; };
+    rows.sort((a,b) => idx(a[0]) - idx(b[0]));
+  } else rows.sort((a,b) => b[1] - a[1]);
+  return rows;
+}
+function barCard(title, rows, total){
+  const max = Math.max(1, ...rows.map(r => r[1]));
+  return `<div class="card"><h4>${esc(title)}</h4>${rows.length ? rows.map(([l,n]) => `
+    <div class="bar-row">
+      <div class="bar-label" title="${esc(l)}">${esc(l)}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${(n/max*100).toFixed(1)}%"></div></div>
+      <div class="bar-val">${n} <span>${total ? Math.round(n/total*100) : 0}%</span></div>
+    </div>`).join("") : '<div class="small">No data</div>'}</div>`;
+}
+function renderDashboard(){
+  const scope = $("dash-scope").value || "Active";
+  const list = employees.filter(e => scope === "All" || ws(e) === scope);
+  const total = list.length;
+  const activeN = employees.filter(e => ws(e) === "Active").length;
+  const year = new Date().getFullYear();
+  const hiredThisYear = employees.filter(e => e.date_hired && pd(e.date_hired).getFullYear() === year).length;
+  const avgYrs = total ? (list.reduce((s,e) => s + tenureMonths(e), 0) / total / 12) : 0;
+
+  $("dash-label").textContent = `${total} employee${total===1?"":"s"} in view (${scope === "All" ? "active and resigned" : scope.toLowerCase()})`;
+  $("dash-kpis").innerHTML = [
+    ["In view", total],
+    ["Active (all)", activeN],
+    ["Resigned (all)", employees.length - activeN],
+    [`Hired in ${year}`, hiredThisYear],
+    ["Avg. service (yrs)", avgYrs.toFixed(1)]
+  ].map(([l,n]) => `<div class="stat"><div class="n">${n}</div><div class="l">${l}</div></div>`).join("");
+
+  const ageBucket = (e) => { const a = ageOf(e); if(a===null) return null;
+    return a<20 ? "Under 20" : a<30 ? "20–29" : a<40 ? "30–39" : a<50 ? "40–49" : "50 and above"; };
+  const tenBucket = (e) => { const y = tenureMonths(e)/12;
+    return y<1 ? "Under 1 year" : y<3 ? "1 to under 3 years" : y<5 ? "3 to under 5 years" : y<10 ? "5 to under 10 years" : "10 years and above"; };
+
+  $("dash-charts").innerHTML =
+    barCard("By Sex", tally(list, e => e.sex, SEXES), total) +
+    barCard("By Department", tally(list, e => e.department, DEPARTMENTS), total) +
+    barCard("By Employment Status", tally(list, e => e.employment_status, STATUSES), total) +
+    barCard("By Work Status", tally(list, e => ws(e), WORK), total) +
+    barCard("By Civil Status", tally(list, e => e.civil_status, CIVIL), total) +
+    barCard("By Age Group", tally(list, ageBucket, ["Under 20","20–29","30–39","40–49","50 and above"]), total) +
+    barCard("By Length of Service", tally(list, tenBucket, ["Under 1 year","1 to under 3 years","3 to under 5 years","5 to under 10 years","10 years and above"]), total);
+}
+$("dash-scope").addEventListener("input", renderDashboard);
+
+/* ---------- masterlist ---------- */
+function openMl(){
+  $("ml-work").value = $("f-work").value;
+  $("ml-dept").value = $("f-dept").value;
+  $("ml-emp").value = $("f-status").value;
+  $("ml-sex").value = "";
+  $("ml-modal").classList.remove("hidden");
+}
+$("ml-btn").addEventListener("click", openMl);
+$("ml-close").addEventListener("click", ()=>$("ml-modal").classList.add("hidden"));
+$("ml-cancel").addEventListener("click", ()=>$("ml-modal").classList.add("hidden"));
+
+function sortList(list, mode){
+  const nameCmp = (a,b) => fullName(a).localeCompare(fullName(b));
+  const l = list.slice();
+  if(mode === "id") l.sort((a,b) => String(a.employee_id).localeCompare(String(b.employee_id), undefined, {numeric:true}));
+  else if(mode === "hired") l.sort((a,b) => (a.date_hired||"").localeCompare(b.date_hired||"") || nameCmp(a,b));
+  else if(mode === "dept") l.sort((a,b) => DEPARTMENTS.indexOf(a.department) - DEPARTMENTS.indexOf(b.department) || nameCmp(a,b));
+  else l.sort(nameCmp);
+  return l;
+}
+
+$("ml-generate").addEventListener("click", ()=>{
+  const work = $("ml-work").value, dept = $("ml-dept").value, es = $("ml-emp").value, sx = $("ml-sex").value;
+  const group = $("ml-group").checked;
+  let list = employees.filter(e =>
+    (work === "All" || ws(e) === work) && (!dept || e.department === dept) &&
+    (!es || e.employment_status === es) && (!sx || e.sex === sx));
+  list = sortList(list, group ? "dept" === $("ml-sort").value ? "dept" : $("ml-sort").value : $("ml-sort").value);
+  if(!list.length){ return toast("No employees match those filters"); }
+
+  const cols = [["Employee ID", e => e.employee_id], ["Name", fullName], ["Position", e => e.position]];
+  if(!group) cols.push(["Department", e => e.department]);
+  cols.push(["Employment Status", e => e.employment_status], ["Date Hired", e => fmtDate(e.date_hired)]);
+  if($("ml-workcol").checked || work === "All") cols.push(["Work Status", e => ws(e)], ["Date Resigned", e => fmtDate(e.date_resigned)]);
+  if($("ml-personal").checked) cols.push(["Sex", e => e.sex], ["Civil Status", e => e.civil_status], ["Date of Birth", e => fmtDate(e.date_of_birth)]);
+  if($("ml-contact").checked) cols.push(["Contact No.", e => e.contact_number], ["Email", e => e.email_address], ["Address", e => e.permanent_address]);
+  if($("ml-gov").checked) cols.push(["SSS No.", e => e.sss_number], ["PhilHealth No.", e => e.philhealth_number], ["Pag-IBIG No.", e => e.pagibig_number], ["TIN", e => e.tin_number]);
+
+  let n = 0;
+  const row = (e) => { n++; return `<tr><td>${n}</td>${cols.map(c => `<td>${esc(c[1](e) ?? "")}</td>`).join("")}</tr>`; };
+  let body = "";
+  if(group){
+    DEPARTMENTS.forEach(d => {
+      const g = list.filter(e => e.department === d);
+      if(g.length) body += `<tr class="grp"><td colspan="${cols.length+1}">${esc(d)} &mdash; ${g.length}</td></tr>` + g.map(row).join("");
+    });
+  } else body = list.map(row).join("");
+
+  const filt = [
+    "Work status: " + (work === "All" ? "Active and Resigned" : work),
+    "Department: " + (dept || "All"),
+    "Employment: " + (es || "All"),
+    "Sex: " + (sx || "All")
+  ].join(" · ");
+
+  $("paper").innerHTML = `
+    <div class="rh">
+      <div class="co">${esc(COMPANY)}</div>
+      <div class="ad">${esc(ADDRESS)}</div>
+      <div class="ti">Employee Masterlist</div>
+    </div>
+    <div class="meta"><span>${esc(filt)}</span><span>Generated ${esc(new Date().toLocaleDateString("en-PH",{year:"numeric",month:"long",day:"numeric"}))} &middot; Total: <b>${list.length}</b></span></div>
+    <table><thead><tr><th>No.</th>${cols.map(c => `<th>${esc(c[0])}</th>`).join("")}</tr></thead><tbody>${body}</tbody></table>`;
+
+  reportState = { list, cols, group };
+  $("ml-modal").classList.add("hidden");
+  $("report").classList.remove("hidden");
+  $("report").scrollTop = 0;
+});
+
+$("rep-close").addEventListener("click", ()=>$("report").classList.add("hidden"));
+$("rep-print").addEventListener("click", ()=>{
+  const old = document.title;
+  document.title = "Cadlao Employee Masterlist " + today();
+  window.print();
+  setTimeout(()=>{ document.title = old; }, 500);
+});
+$("rep-csv").addEventListener("click", ()=>{
+  if(!reportState) return;
+  const { list, cols } = reportState;
+  download(`cadlao-masterlist-${today()}.csv`,
+    toCsv(["No."].concat(cols.map(c => c[0])), list.map((e,i) => [i+1].concat(cols.map(c => c[1](e))))));
+});
+
+/* ---------- misc ---------- */
+function closeAllOverlays(){
+  ["card-modal","modal","ml-modal","report"].forEach(id => $(id).classList.add("hidden"));
+}
+document.addEventListener("keydown", (e)=>{
+  if(e.key !== "Escape") return;
+  if(!$("report").classList.contains("hidden")) return $("report").classList.add("hidden");
+  ["ml-modal","modal","card-modal"].forEach(id => $(id).classList.add("hidden"));
 });
 
 /* ---------- init ---------- */
 fillSelect(form.elements.department, DEPARTMENTS, "Select…");
 fillSelect(form.elements.employment_status, STATUSES, "Select…");
+fillSelect(form.elements.work_status, WORK);
 fillSelect(form.elements.civil_status, CIVIL, "—");
 fillSelect(form.elements.sex, SEXES, "—");
+
+fillSelect($("f-work"), [["Active","Active employees"],["Resigned","Resigned employees"],["All","Active + Resigned"]]);
 fillSelect($("f-dept"), DEPARTMENTS, "All departments");
-fillSelect($("f-status"), STATUSES, "All statuses");
+fillSelect($("f-status"), STATUSES, "All employment statuses");
+fillSelect($("dash-scope"), [["Active","Active employees"],["Resigned","Resigned employees"],["All","Active + Resigned"]]);
+
+fillSelect($("ml-work"), [["Active","Active employees"],["Resigned","Resigned employees"],["All","Active + Resigned"]]);
+fillSelect($("ml-dept"), DEPARTMENTS, "All departments");
+fillSelect($("ml-emp"), STATUSES, "All statuses");
+fillSelect($("ml-sex"), SEXES, "All");
+
 route();
 </script>
 </body>
