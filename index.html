@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Cadlao HRIS</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --bg:#f4f1ea; --card:#ffffff; --ink:#1f2a2e; --muted:#6b7780; --line:#e3ded3;
+    --brand:#0f6b72; --brand-dark:#0a4f55; --accent:#d9a441; --danger:#b3392f; --ok:#2e7d4f;
+    --radius:12px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:15px}
+  .hidden{display:none !important}
+  h1,h2,h3{margin:0}
+  button{font:inherit;cursor:pointer}
+  input,select,textarea{font:inherit;color:inherit}
+
+  /* ---------- Auth screens ---------- */
+  .auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
+    background:linear-gradient(135deg,#0a4f55 0%,#0f6b72 55%,#1b8791 100%)}
+  .auth-card{background:var(--card);width:100%;max-width:420px;border-radius:16px;padding:32px;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+  .brand-mark{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700}
+  .auth-card h1{font-size:24px;margin:6px 0 2px}
+  .auth-card .sub{color:var(--muted);font-size:13px;margin-bottom:22px}
+  .field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+  .field label{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  .field input,.field select,.field textarea{padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;width:100%}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--brand);outline-offset:-1px;border-color:var(--brand)}
+  .btn{padding:10px 16px;border-radius:8px;border:1px solid transparent;font-weight:600}
+  .btn-primary{background:var(--brand);color:#fff}
+  .btn-primary:hover{background:var(--brand-dark)}
+  .btn-ghost{background:#fff;border-color:var(--line);color:var(--ink)}
+  .btn-ghost:hover{background:#f7f5ef}
+  .btn-danger{background:#fff;border-color:#e6b9b4;color:var(--danger)}
+  .btn-danger:hover{background:#fbeeec}
+  .btn-block{width:100%}
+  .btn:disabled{opacity:.6;cursor:not-allowed}
+  .msg{padding:10px 12px;border-radius:8px;font-size:13px;margin-bottom:14px}
+  .msg.err{background:#fbeeec;color:var(--danger);border:1px solid #f0c9c4}
+  .msg.ok{background:#e9f5ee;color:var(--ok);border:1px solid #c6e3d1}
+  .qr-box{display:flex;justify-content:center;margin:10px 0}
+  .qr-box img{width:190px;height:190px;border:1px solid var(--line);border-radius:10px;padding:6px;background:#fff}
+  .secret{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;background:#f7f5ef;border:1px dashed var(--line);
+    padding:8px 10px;border-radius:8px;word-break:break-all;text-align:center;user-select:all}
+  .code-input{text-align:center;font-size:24px !important;letter-spacing:.35em;font-family:ui-monospace,Menlo,Consolas,monospace}
+  .linkbtn{background:none;border:none;color:var(--brand);text-decoration:underline;padding:0;font-size:13px}
+  .small{font-size:13px;color:var(--muted)}
+  .steps{padding-left:18px;margin:0 0 12px;color:var(--muted);font-size:13px}
+
+  /* ---------- App ---------- */
+  header.top{background:var(--brand-dark);color:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  header.top .t1{font-weight:700;font-size:18px}
+  header.top .t2{font-size:12px;opacity:.8}
+  header.top .right{display:flex;align-items:center;gap:12px;font-size:13px}
+  header.top .btn-ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.4)}
+  header.top .btn-ghost:hover{background:rgba(255,255,255,.12)}
+  main{max-width:1280px;margin:0 auto;padding:24px}
+  .page-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+  .page-head h2{font-size:22px}
+  .page-head .small{margin-top:2px}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px}
+  .stat .n{font-size:26px;font-weight:700;color:var(--brand)}
+  .stat .l{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+  .toolbar input,.toolbar select{padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#fff}
+  .toolbar input[type=search]{flex:1;min-width:220px}
+  .table-wrap{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:auto}
+  table{width:100%;border-collapse:collapse;min-width:820px}
+  th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+  th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:#faf8f3;position:sticky;top:0}
+  tbody tr{cursor:pointer}
+  tbody tr:hover{background:#f7fafa}
+  td.name{font-weight:600}
+  .badge{display:inline-block;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:600;background:#eef1f2;color:#44525a}
+  .badge.Regular{background:#e3f3e9;color:#25683f}
+  .badge.Probationary{background:#fdf1d6;color:#8a6414}
+  .badge.Contractual,.badge.Project{background:#e4eefb;color:#2a5a99}
+  .badge.Seasonal,.badge.Manpower{background:#f0e8f8;color:#6a3f93}
+  .empty{padding:40px;text-align:center;color:var(--muted)}
+
+  /* ---------- Modal ---------- */
+  .overlay{position:fixed;inset:0;background:rgba(15,25,28,.55);display:flex;align-items:flex-start;justify-content:center;padding:30px 16px;overflow:auto;z-index:50}
+  .modal{background:var(--card);width:100%;max-width:760px;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+  .modal-head{padding:18px 24px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+  .modal-head h3{font-size:18px}
+  .x{background:none;border:none;font-size:24px;line-height:1;color:var(--muted)}
+  .modal-body{padding:20px 24px}
+  .modal-foot{padding:16px 24px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .modal-foot .grp{display:flex;gap:10px}
+  fieldset{border:none;padding:0;margin:0 0 6px}
+  legend{font-size:13px;font-weight:700;color:var(--brand);text-transform:uppercase;letter-spacing:.06em;padding:0;margin-bottom:10px;border-bottom:2px solid var(--accent);display:inline-block}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0 14px}
+  .grid.g3{grid-template-columns:repeat(3,1fr)}
+  .grid .full{grid-column:1/-1}
+  @media(max-width:640px){.grid,.grid.g3{grid-template-columns:1fr}main{padding:14px}}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1f2a2e;color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;z-index:100}
+</style>
+</head>
+<body>
+
+<!-- ================= LOGIN ================= -->
+<section id="screen-login" class="auth-wrap hidden">
+  <form class="auth-card" id="login-form" autocomplete="on">
+    <div class="brand-mark">Cadlao Resort and Restaurant</div>
+    <h1>HRIS Sign In</h1>
+    <div class="sub">Caalan, El Nido, Palawan &middot; Authorized HR personnel only</div>
+    <div id="login-msg" class="msg err hidden"></div>
+    <div class="field"><label for="login-email">Email</label><input id="login-email" type="email" required autocomplete="username"></div>
+    <div class="field"><label for="login-pass">Password</label><input id="login-pass" type="password" required autocomplete="current-password"></div>
+    <button class="btn btn-primary btn-block" id="login-btn" type="submit">Continue</button>
+  </form>
+</section>
+
+<!-- ================= APP ================= -->
+<div id="screen-app" class="hidden">
+  <header class="top">
+    <div>
+      <div class="t1">Cadlao Resort and Restaurant &mdash; HRIS</div>
+      <div class="t2">Caalan, El Nido, Palawan</div>
+    </div>
+    <div class="right">
+      <span id="user-email"></span>
+      <button class="btn btn-ghost" data-signout>Sign out</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-head">
+      <div>
+        <h2>Employee Database</h2>
+        <div class="small" id="count-label"></div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-ghost" id="export-btn">Export CSV</button>
+        <button class="btn btn-primary" id="add-btn">+ Add Employee</button>
+      </div>
+    </div>
+
+    <div class="stats" id="stats"></div>
+
+    <div class="toolbar">
+      <input type="search" id="search" placeholder="Search name, ID number, position…">
+      <select id="f-dept"><option value="">All departments</option></select>
+      <select id="f-status"><option value="">All statuses</option></select>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>Emp ID</th><th>Name</th><th>Position</th><th>Department</th><th>Status</th><th>Date Hired</th><th>Contact</th>
+        </tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div class="empty hidden" id="empty">No employees found.</div>
+    </div>
+  </main>
+</div>
+
+<!-- ================= EMPLOYEE MODAL ================= -->
+<div class="overlay hidden" id="modal">
+  <form class="modal" id="emp-form">
+    <div class="modal-head">
+      <h3 id="modal-title">Add Employee</h3>
+      <button type="button" class="x" id="modal-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div id="form-msg" class="msg err hidden"></div>
+
+      <fieldset>
+        <legend>Name</legend>
+        <div class="grid">
+          <div class="field"><label>First Name *</label><input name="first_name" required></div>
+          <div class="field"><label>Middle Name</label><input name="middle_name"></div>
+          <div class="field"><label>Last Name *</label><input name="last_name" required></div>
+          <div class="field"><label>Suffix</label><input name="suffix" placeholder="Jr., Sr., III"></div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Employment</legend>
+        <div class="grid">
+          <div class="field"><label>Employee ID Number *</label><input name="employee_id" required></div>
+          <div class="field"><label>Position *</label><input name="position" required></div>
+          <div class="field"><label>Department *</label><select name="department" required></select></div>
+          <div class="field"><label>Employment Status *</label><select name="employment_status" required></select></div>
+          <div class="field"><label>Date Hired *</label><input type="date" name="date_hired" required></div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Personal</legend>
+        <div class="grid g3">
+          <div class="field"><label>Sex</label><select name="sex"></select></div>
+          <div class="field"><label>Civil Status</label><select name="civil_status"></select></div>
+          <div class="field"><label>Date of Birth</label><input type="date" name="date_of_birth"></div>
+          <div class="field full"><label>Permanent Address</label><textarea name="permanent_address" rows="2"></textarea></div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Contact</legend>
+        <div class="grid">
+          <div class="field"><label>Contact Number</label><input name="contact_number" type="tel"></div>
+          <div class="field"><label>Email Address</label><input name="email_address" type="email"></div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Government Numbers</legend>
+        <div class="grid">
+          <div class="field"><label>SSS Number</label><input name="sss_number"></div>
+          <div class="field"><label>PhilHealth Number</label><input name="philhealth_number"></div>
+          <div class="field"><label>Pag-IBIG Number</label><input name="pagibig_number"></div>
+          <div class="field"><label>TIN Number</label><input name="tin_number"></div>
+        </div>
+      </fieldset>
+    </div>
+    <div class="modal-foot">
+      <button type="button" class="btn btn-danger hidden" id="delete-btn">Delete</button>
+      <div class="grp" style="margin-left:auto">
+        <button type="button" class="btn btn-ghost" id="cancel-btn">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="save-btn">Save</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="toast hidden" id="toast"></div>
+
+<script>
+/* =====================================================
+   CONFIG
+   The publishable key is designed to be public. Your data is protected
+   by Row Level Security (only signed-in users can read or write) + the
+   email/password login above.
+   ===================================================== */
+const SUPABASE_URL = "https://hlewbexqatbbstyydgmv.supabase.co";
+const SUPABASE_KEY = "sb_publishable_jSlSMDXaMn0pSYSgoJqMhg_s9t8VJiI";
+const IDLE_MINUTES = 15;   // auto sign-out after inactivity
+
+const DEPARTMENTS = ["Admin","Front Office","Reservations","Housekeeping","Laundry","Maintenance","Kitchen","F&B","Bar","Accounting","HR","Operations","Marketing","Executive"];
+const STATUSES    = ["Probationary","Regular","Project Based","Contractual","Seasonal","Manpower Pool"];
+const CIVIL       = ["Single","Married","Widow"];
+const SEXES       = ["Male","Female"];
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: { persistSession: true, autoRefreshToken: true }
+});
+
+const $ = (id) => document.getElementById(id);
+let employees = [];
+let editingId = null;
+let idleTimer = null;
+
+/* ---------- helpers ---------- */
+function show(name){
+  $("screen-login").classList.toggle("hidden", name !== "login");
+  $("screen-app").classList.toggle("hidden", name !== "app");
+}
+function showMsg(id, text, type="err"){
+  const el = $(id); el.textContent = text; el.className = "msg " + type;
+}
+function clearMsg(id){ $(id).className = "msg err hidden"; $(id).textContent = ""; }
+function toast(text){
+  const t = $("toast"); t.textContent = text; t.classList.remove("hidden");
+  clearTimeout(toast._t); toast._t = setTimeout(()=>t.classList.add("hidden"), 2600);
+}
+function esc(s){
+  return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function fillSelect(sel, items, placeholder){
+  sel.innerHTML = (placeholder !== undefined ? `<option value="">${esc(placeholder)}</option>` : "") +
+    items.map(i => `<option value="${esc(i)}">${esc(i)}</option>`).join("");
+}
+function fullName(e){
+  const mi = e.middle_name ? " " + e.middle_name : "";
+  const suf = e.suffix ? " " + e.suffix : "";
+  return `${e.last_name}, ${e.first_name}${mi}${suf}`;
+}
+function fmtDate(d){
+  if(!d) return "";
+  const [y,m,day] = d.split("-").map(Number);
+  return new Date(y, m-1, day).toLocaleDateString("en-PH",{year:"numeric",month:"short",day:"numeric"});
+}
+function badgeClass(s){ return s.split(" ")[0]; }
+
+/* ---------- auth flow ---------- */
+async function route(){
+  const { data:{ session } } = await sb.auth.getSession();
+  if(!session){ stopIdle(); return show("login"); }
+  return enterApp(session);
+}
+
+$("login-form").addEventListener("submit", async (e)=>{
+  e.preventDefault(); clearMsg("login-msg");
+  const btn = $("login-btn"); btn.disabled = true; btn.textContent = "Signing in…";
+  const { error } = await sb.auth.signInWithPassword({
+    email: $("login-email").value.trim(),
+    password: $("login-pass").value
+  });
+  btn.disabled = false; btn.textContent = "Continue";
+  if(error){ return showMsg("login-msg", "Invalid email or password."); }
+  $("login-pass").value = "";
+  route();
+});
+
+document.querySelectorAll("[data-signout]").forEach(b => b.addEventListener("click", signOut));
+async function signOut(){
+  stopIdle();
+  employees = [];
+  $("rows").innerHTML = "";
+  await sb.auth.signOut();
+  show("login");
+}
+sb.auth.onAuthStateChange((event)=>{
+  if(event === "SIGNED_OUT"){ setTimeout(()=>show("login"),0); }
+});
+
+/* ---------- idle timeout ---------- */
+function startIdle(){
+  stopIdle();
+  const reset = () => { clearTimeout(idleTimer); idleTimer = setTimeout(async ()=>{
+    await signOut(); showMsg("login-msg","You were signed out due to inactivity.");
+  }, IDLE_MINUTES*60*1000); };
+  startIdle._reset = reset;
+  ["mousemove","keydown","click","touchstart"].forEach(ev => window.addEventListener(ev, reset, {passive:true}));
+  reset();
+}
+function stopIdle(){
+  clearTimeout(idleTimer);
+  if(startIdle._reset){
+    ["mousemove","keydown","click","touchstart"].forEach(ev => window.removeEventListener(ev, startIdle._reset));
+    startIdle._reset = null;
+  }
+}
+
+/* ---------- app ---------- */
+async function enterApp(session){
+  show("app");
+  $("user-email").textContent = session.user.email;
+  startIdle();
+  await loadEmployees();
+}
+
+async function loadEmployees(){
+  const { data, error } = await sb.from("employees").select("*").order("last_name").order("first_name");
+  if(error){ toast("Could not load employees: " + error.message); return; }
+  employees = data || [];
+  render();
+}
+
+function filtered(){
+  const q = $("search").value.trim().toLowerCase();
+  const d = $("f-dept").value, s = $("f-status").value;
+  return employees.filter(e =>
+    (!d || e.department === d) &&
+    (!s || e.employment_status === s) &&
+    (!q || [fullName(e), e.employee_id, e.position].join(" ").toLowerCase().includes(q))
+  );
+}
+
+function render(){
+  const list = filtered();
+  $("count-label").textContent = `${list.length} of ${employees.length} employee${employees.length===1?"":"s"}`;
+
+  // stats
+  const count = (st) => employees.filter(e => e.employment_status === st).length;
+  $("stats").innerHTML = [
+    ["Total", employees.length], ["Regular", count("Regular")], ["Probationary", count("Probationary")],
+    ["Contractual / Project", count("Contractual")+count("Project Based")],
+    ["Seasonal / Pool", count("Seasonal")+count("Manpower Pool")]
+  ].map(([l,n]) => `<div class="stat"><div class="n">${n}</div><div class="l">${l}</div></div>`).join("");
+
+  $("rows").innerHTML = list.map(e => `
+    <tr data-id="${esc(e.id)}">
+      <td>${esc(e.employee_id)}</td>
+      <td class="name">${esc(fullName(e))}</td>
+      <td>${esc(e.position)}</td>
+      <td>${esc(e.department)}</td>
+      <td><span class="badge ${esc(badgeClass(e.employment_status))}">${esc(e.employment_status)}</span></td>
+      <td>${esc(fmtDate(e.date_hired))}</td>
+      <td>${esc(e.contact_number || "")}</td>
+    </tr>`).join("");
+  $("empty").classList.toggle("hidden", list.length > 0);
+}
+
+["search","f-dept","f-status"].forEach(id => $(id).addEventListener("input", render));
+$("rows").addEventListener("click", (e)=>{
+  const tr = e.target.closest("tr"); if(!tr) return;
+  openModal(employees.find(x => x.id === tr.dataset.id));
+});
+
+/* ---------- modal ---------- */
+const form = $("emp-form");
+const FIELDS = ["first_name","middle_name","last_name","suffix","employee_id","position","department","employment_status",
+  "date_hired","civil_status","sex","date_of_birth","permanent_address","contact_number","email_address",
+  "sss_number","philhealth_number","pagibig_number","tin_number"];
+
+function openModal(emp){
+  editingId = emp ? emp.id : null;
+  clearMsg("form-msg");
+  form.reset();
+  $("modal-title").textContent = emp ? "Edit Employee" : "Add Employee";
+  $("delete-btn").classList.toggle("hidden", !emp);
+  FIELDS.forEach(f => { form.elements[f].value = emp ? (emp[f] ?? "") : ""; });
+  $("modal").classList.remove("hidden");
+  $("modal").scrollTop = 0;
+}
+function closeModal(){ $("modal").classList.add("hidden"); }
+$("add-btn").addEventListener("click", ()=>openModal(null));
+$("modal-close").addEventListener("click", closeModal);
+$("cancel-btn").addEventListener("click", closeModal);
+
+form.addEventListener("submit", async (e)=>{
+  e.preventDefault(); clearMsg("form-msg");
+  const payload = {};
+  FIELDS.forEach(f => { const v = form.elements[f].value.trim(); payload[f] = v === "" ? null : v; });
+
+  const btn = $("save-btn"); btn.disabled = true; btn.textContent = "Saving…";
+  const res = editingId
+    ? await sb.from("employees").update(payload).eq("id", editingId)
+    : await sb.from("employees").insert(payload);
+  btn.disabled = false; btn.textContent = "Save";
+
+  if(res.error){
+    let m = res.error.message;
+    if(res.error.code === "23505"){
+      m = "Duplicate value: that Employee ID or government number already belongs to another employee.";
+    } else if(res.error.code === "23514"){
+      m = "Please check your entries (invalid email, or date of birth is not before date hired).";
+    }
+    return showMsg("form-msg", m);
+  }
+  closeModal(); toast(editingId ? "Employee updated" : "Employee added");
+  loadEmployees();
+});
+
+$("delete-btn").addEventListener("click", async ()=>{
+  const emp = employees.find(x => x.id === editingId); if(!emp) return;
+  if(!confirm(`Permanently delete ${fullName(emp)} (${emp.employee_id})?\nThis cannot be undone.`)) return;
+  const { error } = await sb.from("employees").delete().eq("id", editingId);
+  if(error){ return showMsg("form-msg", error.message); }
+  closeModal(); toast("Employee deleted"); loadEmployees();
+});
+
+/* ---------- CSV export ---------- */
+$("export-btn").addEventListener("click", ()=>{
+  const list = filtered();
+  if(!list.length){ return toast("Nothing to export"); }
+  const cols = FIELDS;
+  const cell = (v) => `"${String(v ?? "").replace(/"/g,'""')}"`;
+  // prefix gov numbers with a tab-safe apostrophe-free approach: wrap in quotes only (Excel may drop leading zeros)
+  const csv = [cols.join(",")].concat(list.map(e => cols.map(c => cell(e[c])).join(","))).join("\r\n");
+  const blob = new Blob(["\ufeff"+csv], {type:"text/csv;charset=utf-8"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `cadlao-employees-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click(); URL.revokeObjectURL(a.href);
+});
+
+/* ---------- init ---------- */
+fillSelect(form.elements.department, DEPARTMENTS, "Select…");
+fillSelect(form.elements.employment_status, STATUSES, "Select…");
+fillSelect(form.elements.civil_status, CIVIL, "—");
+fillSelect(form.elements.sex, SEXES, "—");
+fillSelect($("f-dept"), DEPARTMENTS, "All departments");
+fillSelect($("f-status"), STATUSES, "All statuses");
+route();
+</script>
+</body>
+</html>
